@@ -1,15 +1,20 @@
 import threading 
 import socket
+import os
 
 host = '127.0.0.1'
 
 port =  55555
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+# AF_INET is for Ipv4 address networking and 
+# The SOCK_STREAM socket type is used for reliable flow-controlled data streams, such as those provided by TCP. UDP, on the other hand, requires a packet-based socket type, SOCK_DGRAM.
 
 server.bind((host,port))
 
 server.listen()
+
+print('Listening at', server.getsockname())
 
 clients = []
 nicknames = []
@@ -47,6 +52,13 @@ def receive():
         thread = threading.Thread(target=handle, args=(client,))
 
         thread.start()
+        ipt = input('') 
+        if ipt == 'q':
+            print('Closing all connections...')
+            for connection in server.connections:
+                connection.sc.close()
+            print('Shutting down the server...')
+            os._exit(0)
 
 print("Server is listening...")
 receive()
